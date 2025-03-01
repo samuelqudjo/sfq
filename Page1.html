@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghana Income Tax Calculator & Page 1</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts/script2.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            color: #333;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #1e3c72;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #1e3c72;
+            outline: none;
+            box-shadow: 0px 0px 5px rgba(30, 60, 114, 0.5);
+        }
+
+        button, .btn {
+            background: #1e3c72;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+            width: 95%;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .btn:hover {
+            background: #2a5298;
+        }
+        button:disabled {
+            background-color: #B0BEC5;
+            cursor: not-allowed;
+        }
+        .highlight {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #00796B;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #1e3c72;
+            padding: 10px;
+            background: rgba(30, 60, 114, 0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+       <!-- <h1>Welcome to Page 2</h1>
+        <p>This is the second page with JavaScript functionality.</p> -->
+        <a href="index.html" class="btn">Back to Home</a>
+    </div>
+
+    <div class="container">
+        <body>
+    <h2>Ghana Income Tax Calculator</h2>
+    <label>Basic Salary (GHS): <input type="number" id="basicSalary"></label>
+    <label>Allowance (GHS): <input type="number" id="allowance"></label>
+    <label>Tier 3 Contribution (%): <input type="number" id="tier3"></label>
+    <label>Tax Relief (GHS): <input type="number" id="taxRelief"></label>
+    <button onclick="calculateTaxWrapper()" id="calculateBtn">Calculate</button>
+    <button onclick="clearFields()" id="clearBtn" disabled>Clear</button>
+    <h3>Results</h3>
+    <p>Total Earnings: GHS <span id="totalEarnings">0</span></p>
+    <p>Taxable Income: GHS <span id="taxableIncome">0</span></p>
+    <p>Income Tax: GHS <span id="incomeTax">0</span></p>
+    <p>Net Income: GHS <span id="netIncome" class="highlight">0</span></p>
+
+
+    <script>
+        function calculateTax(taxableIncome) {
+            let tax = 0;
+            let remainingIncome = taxableIncome;
+
+            // Define bracket limits
+            let bracket1 = 490;
+            let bracket2 = bracket1 + 110;
+            let bracket3 = bracket2 + 130;
+            let bracket4 = bracket3 + 3166.67;
+            let bracket5 = bracket4 + 16000;
+            let bracket6 = bracket5 + 30520;
+           
+        
+
+            // Define rates
+            let rate1 = 0.00;
+            let rate2 = 0.05;
+            let rate3 = 0.10;
+            let rate4 = 0.175;
+            let rate5 = 0.25;
+            let rate6 = 0.30;
+            let rate7 = 0.35;
+
+            // Compute tax for each bracket
+            let tax1 = (remainingIncome > bracket1) ? bracket1 * rate1 : remainingIncome * rate1;
+            remainingIncome -= bracket1;
+
+            let tax2 = (remainingIncome > 0) ? Math.min(remainingIncome, bracket2 - bracket1) * rate2 : 0;
+            remainingIncome -= (remainingIncome > 0) ? Math.min(remainingIncome, bracket2 - bracket1) : 0;
+
+            let tax3 = (remainingIncome > 0) ? Math.min(remainingIncome, bracket3 - bracket2) * rate3 : 0;
+            remainingIncome -= (remainingIncome > 0) ? Math.min(remainingIncome, bracket3 - bracket2) : 0;
+
+            let tax4 = (remainingIncome > 0) ? Math.min(remainingIncome, bracket4 - bracket3) * rate4 : 0;
+            remainingIncome -= (remainingIncome > 0) ? Math.min(remainingIncome, bracket4 - bracket3) : 0;
+
+            let tax5 = (remainingIncome > 0) ? Math.min(remainingIncome, bracket5 - bracket4) * rate5 : 0;
+            remainingIncome -= (remainingIncome > 0) ? Math.min(remainingIncome, bracket5 - bracket4) : 0;
+
+            let tax6 = (remainingIncome > 0) ? Math.min(remainingIncome, bracket6 - bracket5) * rate6 : 0;
+            remainingIncome -= (remainingIncome > 0) ? Math.min(remainingIncome, bracket6 - bracket5) : 0;
+
+            let tax7 = (remainingIncome > 0) ? remainingIncome * rate7 : 0;
+
+            // Total tax
+            tax = tax1 + tax2 + tax3 + tax4 + tax5 + tax6 + tax7;
+            return tax.toFixed(2);
+        }
+
+        function calculateTaxWrapper() {
+            let basicSalary = parseFloat(document.getElementById("basicSalary").value) || 0;
+            let allowance = parseFloat(document.getElementById("allowance").value) || 0;
+            let tier3Percent = parseFloat(document.getElementById("tier3").value) || 0;
+            let taxRelief = parseFloat(document.getElementById("taxRelief").value) || 0;
+
+            let ssnitTier1 = Math.min(0.055 * basicSalary, 1000000);
+            let ssnitTier2 = 0.05 * basicSalary;
+            let tier3Contribution = (tier3Percent / 100) * basicSalary;
+            let totalSSNIT = ssnitTier1 + ssnitTier2;
+
+            let totalEarnings = (basicSalary + allowance) - tier3Contribution;
+            let taxableIncome = Math.max(0, totalEarnings - ssnitTier1 - taxRelief);
+
+            let tax = parseFloat(calculateTax(taxableIncome));
+            let netIncome = totalEarnings - ssnitTier1 - tax;
+
+            document.getElementById("totalEarnings").innerText = totalEarnings.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById("taxableIncome").innerText = taxableIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById("incomeTax").innerText = tax.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById("netIncome").innerText = netIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            document.getElementById("clearBtn").disabled = false;
+        }
+        
+            
+            function clearFields() {
+            document.getElementById("basicSalary").value = "";
+            document.getElementById("allowance").value = "";
+            document.getElementById("tier3").value = "";
+            document.getElementById("taxRelief").value = "";
+            document.getElementById("totalEarnings").innerText = "0";
+            document.getElementById("taxableIncome").innerText = "0";
+            document.getElementById("incomeTax").innerText = "0";
+            document.getElementById("netIncome").innerText = "0";
+            document.getElementById("clearBtn").disabled = true;
+            }
+    </script>
+
+</body>
+</html>
